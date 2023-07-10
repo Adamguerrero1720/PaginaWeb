@@ -1,0 +1,131 @@
+﻿
+@{
+    ViewBag.Title = "Usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="index.html">Resumen</a></li>
+    <li class="breadcrumb-item active">Usuarios</li>
+</ol>
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-users me-1"></i>
+        Lista de usuarios
+    </div>
+    <div class="card-body">
+        <div class=" col-12">
+            <button type="button" class="btn btn-success" onclick="abrirModal()"> Crear nuevo</button>
+        </div>
+        <hr />
+        <table id="tabla" class="display cell-border" style=" width: 100%">
+            <thead>
+                <tr>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Correos</th>
+                    <th>Activo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="FormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle" b>Crear Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="txtNombres">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="txtApellidos">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="txtCorreo">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="cboactivo" class="form-label">Activo</label>
+                        <select id="cboactivo" class="form-select">
+                            <option selected> </option>
+                            <option value="1">Si</option>
+                            <option value="2">No</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="NaN">Cerrar</button>
+                <button type="button" class="btn btn-primary" oneclick="">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+    tabladata = $("#tabla").DataTable({
+        responsive: true,
+        ordering: false,
+        "ajax": {
+            url: '@Url.Action("ListarUsuarios","Home")',
+            type: "GET",
+            datatype: "json"
+        },
+        "columns": [
+            { "data": "Nombre_Usuario" },
+            { "data": "Apellido_Usuario" },
+            { "data": "Correo" },
+            {
+                "data": "Activo", "render": function (valor) {
+                    if (valor) {
+                        return '<span class="badge bg-success">Si</span>';
+                    } else {
+                        return '<span class="badge bg-danger">No</span>';
+                    }
+                }
+            },
+            {
+                "defaultContent": '<div class="text-center">' +
+                    '<button type="button" class="btn btn-primary btn-sm btn-editar"><i class="fas fa-pen"></i></button>' +
+                    '<button type="button" class="btn btn-danger btn-sm ms-3"><i class="fas fa-trash"></i></button>' +
+                    '</div>',
+                    "orderable": false,
+                "searchable": false,
+                "width": "90px"
+            }
+        ],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json"
+        }
+
+    });
+
+        function abrirModal() {
+            $("#FormModal").modal("show");
+        }
+
+        $("#tabla tbody").on("click", '.btn-editar',function () {
+            var filaseleccionada = $(this).closest("tr")
+
+            console.log(tabladata.row(filaseleccionada).data());
+        });
+    </script>
+
+}
